@@ -19,7 +19,51 @@ namespace webAPI_dotnet.Controllers
     [HttpGet]
     public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> GetEmployees()
     {
-      return Ok(await _employeeInterface.GetEmployees());
+    try
+    {
+        var result = await _employeeInterface.GetEmployees();
+        
+        if (!result.Success)
+        {
+          return BadRequest(result);
+        }
+        
+        return Ok(result);
     }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<List<EmployeeModel>>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+}
+
+    [HttpPost]
+    public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> CreateEmployee(EmployeeModel newEmployee)
+    {
+    try
+    {
+        var result = await _employeeInterface.CreateEmployee(newEmployee);
+        
+        if (!result.Success)
+        {
+          return BadRequest(result);
+        }
+        
+        return CreatedAtAction(nameof(GetEmployees), result);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<List<EmployeeModel>>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+}
   }
 }
