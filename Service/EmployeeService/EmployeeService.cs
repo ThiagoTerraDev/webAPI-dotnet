@@ -14,14 +14,15 @@ namespace webAPI_dotnet.Service.EmployeeService
     {
       ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
 
-      try {
+      try 
+      {
         serviceResponse.Data = _context.Employees.ToList();
 
         if(serviceResponse.Data.Count == 0)
         {
           serviceResponse.Message = "No employees found!";
         }
-      } catch(Exception ex)
+      }catch (Exception ex)
       {
         serviceResponse.Message = ex.Message;
         serviceResponse.Success = false;
@@ -30,9 +31,32 @@ namespace webAPI_dotnet.Service.EmployeeService
       return serviceResponse;
     }
 
-    public Task<ServiceResponse<List<EmployeeModel>>> CreateEmployee(EmployeeModel newEmployee)
+    public async Task<ServiceResponse<List<EmployeeModel>>> CreateEmployee(EmployeeModel newEmployee)
     {
-      throw new NotImplementedException();
+      ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+      try 
+      {
+        if(newEmployee == null)
+        {
+          serviceResponse.Data = null;
+          serviceResponse.Message = "Please provide employee data!";
+          serviceResponse.Success = false;
+          return serviceResponse;
+        }
+
+        _context.Employees.Add(newEmployee);
+        await _context.SaveChangesAsync();
+
+        serviceResponse.Data = _context.Employees.ToList();
+      }catch (Exception ex)
+      {
+        serviceResponse.Message = ex.Message;
+        serviceResponse.Success = false;
+      }
+
+      return serviceResponse;
+
     }
 
     public Task<ServiceResponse<EmployeeModel>> GetEmployeeById(int id)
