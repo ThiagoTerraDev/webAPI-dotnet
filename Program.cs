@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using webAPI_dotnet.DataContext;
+using webAPI_dotnet.Service.EmployeeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEmployeeInterface, EmployeeService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
 {
@@ -20,5 +24,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
