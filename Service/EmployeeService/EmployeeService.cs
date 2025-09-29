@@ -59,9 +59,30 @@ namespace webAPI_dotnet.Service.EmployeeService
 
     }
 
-    public Task<ServiceResponse<EmployeeModel>> GetEmployeeById(int id)
+    public async Task<ServiceResponse<EmployeeModel>> GetEmployeeById(int id)
     {
-      throw new NotImplementedException();
+      ServiceResponse<EmployeeModel> serviceResponse = new ServiceResponse<EmployeeModel>();
+
+      try 
+      {
+        EmployeeModel employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+
+        if(employee == null)
+        {
+          serviceResponse.Data = null;
+          serviceResponse.Message = "Employee not found!";
+          serviceResponse.Success = false;
+          return serviceResponse;
+        }
+
+        serviceResponse.Data = employee;
+      }catch (Exception ex)
+      {
+        serviceResponse.Message = ex.Message;
+        serviceResponse.Success = false;
+      }
+
+      return serviceResponse;
     }
 
     public Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel updatedEmployee)
