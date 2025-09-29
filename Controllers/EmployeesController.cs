@@ -21,14 +21,14 @@ namespace webAPI_dotnet.Controllers
     {
     try
     {
-        var result = await _employeeInterface.GetEmployees();
+        ServiceResponse<List<EmployeeModel>> serviceResponse = await _employeeInterface.GetEmployees();
         
-        if (!result.Success)
+        if (!serviceResponse.Success)
         {
-          return BadRequest(result);
+          return BadRequest(serviceResponse);
         }
         
-        return Ok(result);
+        return Ok(serviceResponse);
     }
     catch (Exception)
     {
@@ -39,21 +39,21 @@ namespace webAPI_dotnet.Controllers
           Success = false
         });
     }
-}
+    }
 
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> CreateEmployee(EmployeeModel newEmployee)
     {
     try
     {
-        var result = await _employeeInterface.CreateEmployee(newEmployee);
+        ServiceResponse<List<EmployeeModel>> serviceResponse = await _employeeInterface.CreateEmployee(newEmployee);
         
-        if (!result.Success)
+        if (!serviceResponse.Success)
         {
-          return BadRequest(result);
+          return BadRequest(serviceResponse);
         }
         
-        return CreatedAtAction(nameof(GetEmployees), result);
+        return CreatedAtAction(nameof(GetEmployees), serviceResponse);
     }
     catch (Exception)
     {
@@ -64,6 +64,31 @@ namespace webAPI_dotnet.Controllers
           Success = false
         });
     }
-}
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ServiceResponse<EmployeeModel>>> GetEmployeeById(int id)
+    {
+    try
+    {
+        ServiceResponse<EmployeeModel> serviceResponse = await _employeeInterface.GetEmployeeById(id);
+        
+        if (!serviceResponse.Success)
+        {
+          return BadRequest(serviceResponse);
+        }
+        
+        return Ok(serviceResponse);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<EmployeeModel>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+    }
   }
 }
