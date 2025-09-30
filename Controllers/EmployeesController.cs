@@ -90,5 +90,80 @@ namespace webAPI_dotnet.Controllers
         });
     }
     }
+
+    [HttpPut("deactivateEmployee")]
+    public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> DeactivateEmployee(int id)
+    {
+    try
+    {
+        ServiceResponse<List<EmployeeModel>> serviceResponse = await _employeeInterface.DeactivateEmployee(id);
+        
+        if (!serviceResponse.Success)
+        {
+          return BadRequest(serviceResponse);
+        }
+        
+        return Ok(serviceResponse);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<EmployeeModel>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> UpdateEmployee(EmployeeModel updatedEmployee)
+    {
+    try
+    {
+        ServiceResponse<List<EmployeeModel>> serviceResponse = await _employeeInterface.UpdateEmployee(updatedEmployee);
+        
+        if (!serviceResponse.Success)
+        {
+          return BadRequest(serviceResponse);
+        }
+        
+        return Ok(serviceResponse);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<EmployeeModel>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> DeleteEmployee(int id)
+    {
+    try
+    {
+        ServiceResponse<List<EmployeeModel>> serviceResponse = await _employeeInterface.DeleteEmployee(id);
+        
+        if (!serviceResponse.Success)
+        {
+          return BadRequest(serviceResponse);
+        }
+        
+        return Ok(serviceResponse);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new ServiceResponse<EmployeeModel>
+        {
+          Data = null,
+          Message = "Internal server error",
+          Success = false
+        });
+    }
+    }
   }
 }

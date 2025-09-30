@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using webAPI_dotnet.DataContext;
 using webAPI_dotnet.Models;
 
@@ -85,19 +86,95 @@ namespace webAPI_dotnet.Service.EmployeeService
       return serviceResponse;
     }
 
-    public Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel updatedEmployee)
+    public async Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel updatedEmployee)
     {
-      throw new NotImplementedException();
+      ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+      try 
+      {
+        EmployeeModel employee = _context.Employees.AsNoTracking().FirstOrDefault(e => e.Id == updatedEmployee.Id);
+
+        if(employee == null)
+        {
+          serviceResponse.Data = null;
+          serviceResponse.Message = "Employee not found!";
+          serviceResponse.Success = false;
+          return serviceResponse;
+        }
+
+        employee.UpdatedAt = DateTime.Now.ToLocalTime();
+
+        _context.Employees.Update(updatedEmployee);
+        await _context.SaveChangesAsync();
+
+        serviceResponse.Data = _context.Employees.ToList();
+      }catch (Exception ex)
+      {
+        serviceResponse.Message = ex.Message;
+        serviceResponse.Success = false;
+      }
+
+      return serviceResponse;
     }
 
-    public Task<ServiceResponse<List<EmployeeModel>>> DeleteEmployee(int id)
+    public async Task<ServiceResponse<List<EmployeeModel>>> DeleteEmployee(int id)
     {
-      throw new NotImplementedException();
+      ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+      try 
+      {
+        EmployeeModel employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+
+        if(employee == null)
+        {
+          serviceResponse.Data = null;
+          serviceResponse.Message = "Employee not found!";
+          serviceResponse.Success = false;
+          return serviceResponse;
+        }
+
+        _context.Employees.Remove(employee);
+        await _context.SaveChangesAsync();
+
+        serviceResponse.Data = _context.Employees.ToList();
+      }catch (Exception ex)
+      {
+        serviceResponse.Message = ex.Message;
+        serviceResponse.Success = false;
+      }
+
+      return serviceResponse;
     }
 
-    public Task<ServiceResponse<List<EmployeeModel>>> DeactivateEmployee(int id)
+    public async Task<ServiceResponse<List<EmployeeModel>>> DeactivateEmployee(int id)
     {
-      throw new NotImplementedException();
+      ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+      try 
+      {
+        EmployeeModel employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+
+        if(employee == null)
+        {
+          serviceResponse.Data = null;
+          serviceResponse.Message = "Employee not found!";
+          serviceResponse.Success = false;
+        }
+
+        employee.Active = false;
+        employee.UpdatedAt = DateTime.Now.ToLocalTime();
+
+        _context.Employees.Update(employee);
+        await _context.SaveChangesAsync();
+
+        serviceResponse.Data = _context.Employees.ToList();
+      }catch (Exception ex)
+      {
+        serviceResponse.Message = ex.Message;
+        serviceResponse.Success = false;
+      }
+
+      return serviceResponse;
     }
   }
 }
